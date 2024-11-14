@@ -12,13 +12,19 @@ struct Movimiento
 // Estructura para representar un plazo fijo
 struct PlazoFijo
 {
+    int plata_inicial;
+    int dias;
+    int interes;
+    int total;
+    bool vigente;
+
 };
 
 // Estructura para representar una cuenta bancaria
 struct Cuenta
 {
-    string nusuario, contrasenia;
     // Datos de la cuenta bancaria
+    string nusuario, contrasenia;
     vector<Movimiento> movimientos;
     vector<PlazoFijo> plazos_fijos;
     int cantidad_dolares=0, saldo_en_cuenta=0;
@@ -85,17 +91,46 @@ void retirar_efectivo(Cuenta &usuario, int opcion) {
 
 // 3
 void manejar_dolares(Cuenta &usuario, int opcion) {
-    int opcion1,cantidad_dolares_compra,cantidad_pesos_compra=cantidad_dolares_compra*1000;
-    cout<<"elija entre comprar y vender dolares:"<<endl
-        <<"1.comprar dolares"<<endl
-        <<"2.vender dolares"<<endl;
-    cin>>opcion1;
-    switch(opcion){
+    int opcion1,cantidad_dolares_compra,cantidad_dolares_venta,cantidad_pesos_compra,cantidad_pesos_venta,dolares_sugeridos;
+    bool condicion=true;
+    while(condicion){
+        cout<<"elija entre comprar y vender dolares:"<<endl
+            <<"1.comprar dolares"<<endl
+            <<"2.vender dolares"<<endl
+            <<"3.salir"<<endl;
+        cin>>opcion1;
+        switch(opcion1){
         case 1:
             cout<<"Especifique cuantos dolares quiere comprar:"<<endl;
             cin>>cantidad_dolares_compra;
-            cout<<"La cantidad de pesos que le saldría esta compra es: $"<<cantidad_pesos_compra<<endl;
-            if(cantidad_pesos_compra<=usuario.saldo_en_cuenta)
+            cantidad_pesos_compra=cantidad_dolares_compra*1000;
+            cout<<"La cantidad de pesos que le salio esta compra es: $"<<cantidad_pesos_compra<<endl;
+            if(cantidad_pesos_compra<=usuario.saldo_en_cuenta){
+                usuario.cantidad_dolares+=cantidad_dolares_compra;
+                usuario.saldo_en_cuenta-=cantidad_pesos_compra;
+            }
+            else{
+                dolares_sugeridos=usuario.saldo_en_cuenta/1000;
+                cout<<"No cuenta con suficiente dinero para realizar esta operacion, le sugerimos la compra de: $"<<dolares_sugeridos<<" dolares debido a tu saldo en cuenta"<<endl;
+            }
+            break;
+        case 2:
+            cout<<"Especifique cuantos dolares quiere vender: "<<endl;
+            cin>>cantidad_dolares_venta;
+            cantidad_pesos_venta=cantidad_dolares_venta*1000;
+            cout<<"La cantidad de pesos que se depositarán a tu cuenta por esta venta es: $"<<cantidad_pesos_venta<<endl;
+            if(usuario.cantidad_dolares>=cantidad_dolares_venta){
+                usuario.cantidad_dolares-=cantidad_dolares_venta;
+                usuario.saldo_en_cuenta+=cantidad_pesos_venta;
+            }
+            else{
+                cout<<"No cuenta con suficiente dolares para realizar esta operacion, le sugerimos la venta de: $"<<usuario.cantidad_dolares<<" dolares debido a tu cantidad de dolares en cuenta"<<endl;
+            }
+            break;
+        case 3:
+            condicion=false;
+            break;    
+    }
     }    
 }
 
@@ -103,7 +138,55 @@ void manejar_dolares(Cuenta &usuario, int opcion) {
 void retirar_dolares(Cuenta &usuario, int opcion) {}
 
 // 5
-void armar_plazo_fijo(Cuenta &usuario, int opcion) {}
+void armar_plazo_fijo(Cuenta &usuario, int opcion) {
+    /*
+(Para la opción 5, tener en cuenta que un plazo fijo requiere como 
+mínimo 30 días de plazo, se le deberá pedir al usuario que ingrese un 
+monto de pesos que quiere invertir (menor o igual al saldo en cuenta) y 
+los días que va a estar la plata en el plazo fijo. Teniendo ambos datos 
+ingresados, deberemos calcular el interés generado con la siguiente 
+operación: 
+(Monto de pesos ingresados * días ingresados * 70) / 36500 
+Se mostrara por pantalla la cantidad de pesos y días que ingreso, el 
+interés que va a generar durante los días ingresados y el total de pesos 
+que va a obtener (plata ingresada + interés). Para poder recibir el total 
+de pesos, se deberá respetar el plazo de días puesto en la opción. 
+Posteriormente se le descontará la plata puesta en el plazo fijo del 
+saldo en cuenta. */
+//falta devolverle la plata cuando pase el tiempo pero como lo vamos a ahcer cumpa
+int want, wantdi, wantintere, totfin;
+PlazoFijo auxinverse;
+cout<<"ingresa el monto de pesos que qures invertir en el plazo fijo"<<endl;
+cin>>want;
+cout<<"ingresa la cantidad de dias que deseas que dure el plazo fijo"<<endl;
+cin>>wantdi;
+if(want> usuario.saldo_en_cuenta || wantdi < 30){
+    cout<<"tus datos son incorrectos"<<endl;
+    if(want > usuario.saldo_en_cuenta){
+        cout<<"no tenes esa plata en tu cuenta, no te alcanza"<<endl;
+    }
+    if(wantdi<30){
+        cout<<"tenes q pedir minimo 30 dias para tu plazo fijo"<<endl;
+    }
+}
+else{
+    usuario.saldo_en_cuenta-=want;
+    wantintere=(want*wantdi*70)/36500;
+    cout<<"ingresaste "<<want<<" $ en un plazo fijo de "<<wantdi<<" dias y generaste un interes de "<<wantintere<<endl;
+    cout<<"al final de el plazo fijo obtendras "<<want + wantintere << " $"<<endl;
+    totfin=want + wantintere;
+    auxinverse.plata_inicial=want;
+    auxinverse.dias=wantdi;
+    auxinverse.interes=wantintere;
+    auxinverse.total=totfin;
+    auxinverse.vigente= false;
+    //cuando se cumplan los dias cambiar a true
+    usuario.plazos_fijos.push_back(auxinverse);
+    
+}
+
+
+}
 
 // 6
 void cancelar_plazo_fijo(Cuenta &usuario, int opcion) {}
