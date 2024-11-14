@@ -68,24 +68,35 @@ void retirar_efectivo(Cuenta &usuario, int opcion) {
     }
     else{
         usuario.saldo_en_cuenta-=monto_a_retirar;
-        for(int i=0;(1000/monto_a_retirar)<=1.0;i++){
+        while(monto_a_retirar>=1000){
             cout<<"billete de 1000"<<endl;
             monto_a_retirar-=1000;}
-        for(int i=0;(500/monto_a_retirar)<=1.0;i++){
+        while(monto_a_retirar>=500){
             cout<<"billete de 500"<<endl;
             monto_a_retirar-=500;}
-        for(int i=0;(200/monto_a_retirar)<=1.0;i++){
+        while(monto_a_retirar>=200){
             cout<<"billete de 200"<<endl;
             monto_a_retirar-=200;}
-        for(int i=0;(100/monto_a_retirar)<=1.0;i++){
+        while(monto_a_retirar>=100){
             cout<<"billete de 100"<<endl;
-            monto_a_retirar-=100;}                        
+            monto_a_retirar-=100;}                       
     }
 }
 
 // 3
 void manejar_dolares(Cuenta &usuario, int opcion) {
-
+    int opcion1,cantidad_dolares_compra,cantidad_pesos_compra=cantidad_dolares_compra*1000;
+    cout<<"elija entre comprar y vender dolares:"<<endl
+        <<"1.comprar dolares"<<endl
+        <<"2.vender dolares"<<endl;
+    cin>>opcion1;
+    switch(opcion){
+        case 1:
+            cout<<"Especifique cuantos dolares quiere comprar:"<<endl;
+            cin>>cantidad_dolares_compra;
+            cout<<"La cantidad de pesos que le saldría esta compra es: $"<<cantidad_pesos_compra<<endl;
+            if(cantidad_pesos_compra<=usuario.saldo_en_cuenta)
+    }    
 }
 
 // 4
