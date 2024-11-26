@@ -1,7 +1,5 @@
-jijija,jijija,.
-carlos,zulema,.
-benja,joda,.
-juanfer,madrid,.
-juanfer,madrid,.
-juanfer,madrid,.
-pepo,123,.
+jijija,jijija,40,6,4.
+juancho,zulema,3600,50,2.
+benja,joda,375000,50,1.
+juanfer,madrid,22000,30,3.
+pepo,123,30000,30,6.

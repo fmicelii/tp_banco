@@ -394,7 +394,7 @@ void ver_movimientos(Cuenta usuario,vector <movimiento> ingresos,vector <movimie
 }   
 
 // 9
-void actualizar_datos(Cuenta &usuario, int opcion) {
+void actualizar_datos(Cuenta &usuario, int opcion, string name) {
     /*
 se le preguntará al usuario qué datos desea actualizar. 
 En el caso de que elija cambiar su nombre de usuario, se le solicitará 
@@ -405,6 +405,21 @@ mostrar un error y pedirle que vuelva a ingresar los datos, en el caso de
 que las contraseñas coincidan, se deberá mostrar un mensaje de éxito,
 
         */
+    ifstream file_ent("./bdd.txt");
+    ofstream file_temp("./bdd_aux.txt");
+    string linea;
+    bool encontrado = false;
+
+    if (!file_ent.is_open()) {
+        cout << "Error al abrir el archivo original." << endl;
+        return;
+    }
+
+    if (!file_temp.is_open()) {
+        cout << "Error al crear el archivo temporal." << endl;
+        return;
+    }
+    
     string auxil;
     cout<<"que deseas cambiar, tu contraseña o tu usuario"<<endl;
     cin>>auxil;
@@ -413,6 +428,31 @@ que las contraseñas coincidan, se deberá mostrar un mensaje de éxito,
         cout<<"que nombre le queres poner?"<<endl;
         cin>>newname;
         //aca reemplazar el nombre de usuario por la variable newname
+        while (getline(file_ent, linea)) {
+        stringstream ss(linea);
+        string nusuario, contrasenia, saldo, dolares, resto;
+        getline(ss, nusuario, ',');       // Extrae nombre de usuario
+        getline(ss, contrasenia, ',');    // Extrae contraseña
+        getline(ss, saldo, ',');          // Extrae saldo
+        getline(ss, dolares, ',');        // Extrae dólares
+        getline(ss, resto);               // Extrae lo restante
+
+        if (nusuario == name) {
+            // Si encontramos al usuario, actualizamos saldo y dólares
+            encontrado = true;
+            file_temp << newname << "," << contrasenia << ","
+                      << usuario.saldo_en_cuenta << "," 
+                      << usuario.cantidad_dolares << "," 
+                      << resto << endl;
+        } else {
+            // Escribimos la línea original en el archivo temporal
+            file_temp << linea << endl;
+        }
+    }
+
+    file_ent.close();
+    file_temp.close();
+
     }
     else if(auxil=="contraseña"){
         
@@ -423,11 +463,97 @@ que las contraseñas coincidan, se deberá mostrar un mensaje de éxito,
         cin>>checon;
         if(newcon==checon){
             //aca reemplazar la contraseña en el txt por newcon
+            while (getline(file_ent, linea)) {
+        stringstream ss(linea);
+        string nusuario, contrasenia, saldo, dolares, resto;
+        getline(ss, nusuario, ',');       // Extrae nombre de usuario
+        getline(ss, contrasenia, ',');    // Extrae contraseña
+        getline(ss, saldo, ',');          // Extrae saldo
+        getline(ss, dolares, ',');        // Extrae dólares
+        getline(ss, resto);               // Extrae lo restante
+
+        if (nusuario == name) {
+            // Si encontramos al usuario, actualizamos saldo y dólares
+            encontrado = true;
+            file_temp << nusuario<< "," << checon << ","
+                      << usuario.saldo_en_cuenta << "," 
+                      << usuario.cantidad_dolares << "," 
+                      << resto << endl;
+        } else {
+            // Escribimos la línea original en el archivo temporal
+            file_temp << linea << endl;
         }
+    }
 
-
+    file_ent.close();
+    file_temp.close();
+        }
+    }
+    if (encontrado) {
+        // Reemplazamos el archivo original con el temporal
+        remove("./bdd.txt");
+        rename("./bdd_aux.txt", "./bdd.txt");
+        cout << "Datos del usuario actualizados con éxito." << endl;
+    } else {
+        // Eliminamos el archivo temporal si no se encontró el usuario
+        remove("./bdd_aux.txt");
+        cout << "Usuario no encontrado." << endl;
     }
 }
+void f5_datos(Cuenta usuario, string name, int pf) {
+    ifstream file_ent("./bdd.txt");
+    ofstream file_temp("./bdd_aux.txt");
+    string linea;
+    bool encontrado = false;
+
+    if (!file_ent.is_open()) {
+        cout << "Error al abrir el archivo original." << endl;
+        return;
+    }
+
+    if (!file_temp.is_open()) {
+        cout << "Error al crear el archivo temporal." << endl;
+        return;
+    }
+
+    // Leer línea por línea del archivo original
+    while (getline(file_ent, linea)) {
+        stringstream ss(linea);
+        string nusuario, contrasenia, saldo, dolares, resto;
+        getline(ss, nusuario, ',');       // Extrae nombre de usuario
+        getline(ss, contrasenia, ',');    // Extrae contraseña
+        getline(ss, saldo, ',');          // Extrae saldo
+        getline(ss, dolares, ',');        // Extrae dólares
+        getline(ss, resto);               // Extrae lo restante
+
+        if (nusuario == name) {
+            // Si encontramos al usuario, actualizamos saldo y dólares
+            encontrado = true;
+            file_temp << nusuario << "," << contrasenia << ","
+                      << usuario.saldo_en_cuenta << "," 
+                      << usuario.cantidad_dolares << "," 
+                      << pf+(usuario.plazos_fijos.size()) << endl;
+        } else {
+            // Escribimos la línea original en el archivo temporal
+            file_temp << linea << endl;
+        }
+    }
+
+    file_ent.close();
+    file_temp.close();
+
+    if (encontrado) {
+        // Reemplazamos el archivo original con el temporal
+        remove("./bdd.txt");
+        rename("./bdd_aux.txt", "./bdd.txt");
+        cout << "Datos del usuario actualizados con éxito." << endl;
+    } else {
+        // Eliminamos el archivo temporal si no se encontró el usuario
+        remove("./bdd_aux.txt");
+        cout << "Usuario no encontrado." << endl;
+    }
+}
+
 
 int main()
 {
@@ -441,7 +567,7 @@ int main()
     vector <movimiento> ventas_dolares;
     Cuenta usuario;
     int opcion;
-    //int salditoBD = stoi(saldoBD);
+    int salditoBD, dolaritosBD, pfBD;
     ifstream archivo;
     bool usuarioEncontrado = false, contraseñaCorrecta = false, sesion1=true;
     string nusuario, contraseña, linea, usuarioBD, contraseñaBD,saldoBD, dolaresBD,cantidad_plazo_fijosBD;
@@ -485,7 +611,15 @@ int main()
         if (contraseñaCorrecta) {
             //usuario.saldo_en_cuenta+=salditoBD;
             cout << "Felicidades, tu sesión fue iniciada correctamente." << endl;
-            cout<<saldoBD<<"-"<<dolaresBD;
+            cout<<"tenes en tu cuenta "<<saldoBD<<" pesos, "<<dolaresBD<<" dolares y "<<cantidad_plazo_fijosBD<<" plazos fijos armados"<<endl;
+            //sacamos del txt los valores de la cuenta 
+            salditoBD = stoi(saldoBD);// con stoi los pasamos de string a int 
+            dolaritosBD= stoi(dolaresBD);
+            pfBD= stoi(cantidad_plazo_fijosBD);
+            //los metemos en la sesion que esta iniciada
+            usuario.saldo_en_cuenta=salditoBD;
+            usuario.cantidad_dolares=dolaritosBD; 
+
             sesion1=true;
         } else {
             cout << "Pusiste mal la contraseña." << endl;
@@ -540,11 +674,15 @@ int main()
             ver_movimientos(usuario,ingresos,retiros,prestamos,ingresos_dolares,ventas_dolares,retiros_dolares);
             break;
         case 9:
-            actualizar_datos(usuario, opcion);
+            actualizar_datos(usuario, opcion, nusuario);
             break;
         case 10:
             saldoBD=usuario.saldo_en_cuenta;
             cout << "Gracias por utilizar nuestro sistema " << usuario.nusuario << ", vuelva pronto." << endl;
+            f5_datos(usuario, nusuario, pfBD);
+
+
+
             break;
         default:
             cout << "Opción no válida. Intente nuevamente." << endl;

@@ -40,7 +40,7 @@ int main() {
     vector <movimiento> ventas_dolares;
     Cuenta usuario;
     int opcion;
-    //int salditoBD = stoi(saldoBD);
+    int salditoBD, dolaritosBD, pfBD;
     ifstream archivo;
     bool usuarioEncontrado = false, contraseñaCorrecta = false, sesion1=true;
     string nusuario, contraseña, linea, usuarioBD, contraseñaBD,saldoBD, dolaresBD,cantidad_plazo_fijosBD;
@@ -84,7 +84,11 @@ int main() {
         if (contraseñaCorrecta) {
             //usuario.saldo_en_cuenta+=salditoBD;
             cout << "Felicidades, tu sesión fue iniciada correctamente." << endl;
-            cout<<saldoBD<<"-"<<dolaresBD;
+            cout<<"tenes en tu cuenta "<<saldoBD<<" pesos, "<<dolaresBD<<" dolares y "<<cantidad_plazo_fijosBD<<" plazos fijos armados"<<endl;
+            salditoBD = stoi(saldoBD);
+            dolaritosBD= stoi(dolaresBD);
+            pfBD= stoi(cantidad_plazo_fijosBD);
+            cout<<salditoBD+dolaritosBD;
             sesion1=true;
         } else {
             cout << "Pusiste mal la contraseña." << endl;
