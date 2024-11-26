@@ -440,7 +440,8 @@ int main()
     vector <movimiento> retiros_dolares;
     vector <movimiento> ventas_dolares;
     Cuenta usuario;
-    int opcion,salditoBD = stoi(saldoBD);
+    int opcion;
+    //int salditoBD = stoi(saldoBD);
     ifstream archivo;
     bool usuarioEncontrado = false, contraseñaCorrecta = false, sesion1=true;
     string nusuario, contraseña, linea, usuarioBD, contraseñaBD,saldoBD, dolaresBD,cantidad_plazo_fijosBD;
@@ -482,7 +483,7 @@ int main()
     // Comprobar resultados
     if (usuarioEncontrado) {
         if (contraseñaCorrecta) {
-            usuario.saldo_en_cuenta+=salditoBD;
+            //usuario.saldo_en_cuenta+=salditoBD;
             cout << "Felicidades, tu sesión fue iniciada correctamente." << endl;
             cout<<saldoBD<<"-"<<dolaresBD;
             sesion1=true;
